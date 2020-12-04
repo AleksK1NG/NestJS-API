@@ -391,3 +391,5 @@ docker.env
 .env
 rabbitmq.env
 dist
+.idea
+pgdata
