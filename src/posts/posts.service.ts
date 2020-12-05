@@ -21,7 +21,7 @@ export class PostsService {
     return this.postRepository.createPost(createPostDto)
   }
 
-  async updatePost(updatePostDto: UpdatePostDto): Promise<UpdateResult> {
+  async updatePost(updatePostDto: UpdatePostDto): Promise<Post> {
     return this.postRepository.updatePost(updatePostDto)
   }
 
