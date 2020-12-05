@@ -2,7 +2,7 @@ import { EntityRepository, Repository } from 'typeorm'
 import Post from './post.entity'
 import CreatePostDto from './dto/createPost.dto'
 import UpdatePostDto from './dto/updatePost.dto'
-import { NotFoundException } from '@nestjs/common'
+import PostNotFoundException from './exceptions/postNotFound.exception'
 
 @EntityRepository(Post)
 export class PostRepository extends Repository<Post> {
@@ -12,7 +12,7 @@ export class PostRepository extends Repository<Post> {
 
   async getPostById(id: number): Promise<Post> {
     const post = await this.findOne({ id })
-    if (!post) throw new NotFoundException({ message: `Post with ID "${id}" not found` })
+    if (!post) throw new PostNotFoundException(id)
     return post
   }
 
@@ -31,12 +31,12 @@ export class PostRepository extends Repository<Post> {
       id,
       ...rest,
     })
-    if (!updatedPost) throw new NotFoundException({ message: `Post with ID "${id}" not found` })
+    if (!updatedPost) throw new PostNotFoundException(id)
     return updatedPost
   }
 
   async deletePost(id: number): Promise<void> {
     const result = await this.delete({ id })
-    if (result.affected === 0) throw new NotFoundException({ message: `Post with ID "${id}" not found` })
+    if (result.affected === 0) throw new PostNotFoundException(id)
   }
 }
