@@ -7,7 +7,13 @@ import { NotFoundException } from '@nestjs/common'
 @EntityRepository(PublicFile)
 export class AwsRepository extends Repository<PublicFile> {
   async uploadPublicFile(dataBuffer: Buffer, filename: string, bucket: string): Promise<PublicFile> {
-    const s3 = new S3()
+    const s3 = new S3({
+      accessKeyId: 'minio',
+      secretAccessKey: 'minio123',
+      endpoint: 'http://127.0.0.1:9000',
+      s3ForcePathStyle: true, // needed with minio?
+      signatureVersion: 'v4',
+    })
     const uploadedResult = await s3
       .upload({
         Bucket: bucket,
@@ -28,7 +34,13 @@ export class AwsRepository extends Repository<PublicFile> {
     const file = await this.findOne({ id: fileId })
     if (!file) throw new NotFoundException(`File with ID: ${fileId} not found`)
 
-    const s3 = new S3()
+    const s3 = new S3({
+      accessKeyId: 'minio',
+      secretAccessKey: 'minio123',
+      endpoint: 'http://127.0.0.1:9000',
+      s3ForcePathStyle: true, // needed with minio?
+      signatureVersion: 'v4',
+    })
     await s3
       .deleteObject({
         Bucket: bucket,
