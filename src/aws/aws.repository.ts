@@ -24,7 +24,7 @@ export class AwsRepository extends Repository<PublicFile> {
     return this.save(newFile)
   }
 
-  async deletePublicFile(fileId: number, bucket: string) {
+  async deletePublicFile(fileId: number, bucket: string): Promise<void> {
     const file = await this.findOne({ id: fileId })
     if (!file) throw new NotFoundException(`File with ID: ${fileId} not found`)
 
