@@ -1,9 +1,22 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common'
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseIntPipe,
+  Post,
+  Put,
+  Query,
+  UseInterceptors,
+} from '@nestjs/common'
 import { PostsService } from './posts.service'
 import CreatePostDto from './dto/createPost.dto'
 import UpdatePostDto from './dto/updatePost.dto'
 
 @Controller('api/v1/posts')
+@UseInterceptors(ClassSerializerInterceptor)
 export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
