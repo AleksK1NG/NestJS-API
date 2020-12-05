@@ -21,12 +21,13 @@ export class CategoriesRepository extends Repository<Category> {
     return this.save(category)
   }
 
-  async updateCategory(updateCategoryDto: UpdateCategoryDto): Promise<Category> {
-    const updatedCategory = await this.preload({
-      ...updateCategoryDto,
-    })
-    if (!updatedCategory) throw new CategoryNotFoundException(updateCategoryDto.id)
-    return updatedCategory
+  async updateCategory(id: number, category: UpdateCategoryDto): Promise<Category> {
+    await this.update(id, category)
+    const updatedCategory = await this.findOne(id, { relations: ['posts'] })
+    if (updatedCategory) {
+      return updatedCategory
+    }
+    throw new CategoryNotFoundException(id)
   }
 
   async deleteCategory(id: number): Promise<void> {

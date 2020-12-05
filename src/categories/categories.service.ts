@@ -20,8 +20,8 @@ export class CategoriesService {
     return this.categoriesRepository.createCategory(createCategoryDto)
   }
 
-  async updateCategory(updateCategoryDto: UpdateCategoryDto): Promise<Category> {
-    return this.categoriesRepository.updateCategory(updateCategoryDto)
+  async updateCategory(id: number, category: UpdateCategoryDto): Promise<Category> {
+    return this.categoriesRepository.updateCategory(id, category)
   }
 
   async deleteCategory(id: number): Promise<void> {
