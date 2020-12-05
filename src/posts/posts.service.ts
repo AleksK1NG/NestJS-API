@@ -1,9 +1,8 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import UpdatePostDto from './dto/updatePost.dto'
 import CreatePostDto from './dto/createPost.dto'
 import { PostRepository } from './post.repository'
 import Post from './post.entity'
-import { UpdateResult } from 'typeorm'
 
 @Injectable()
 export class PostsService {
