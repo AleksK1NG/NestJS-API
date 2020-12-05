@@ -25,7 +25,7 @@ export class PostRepository extends Repository<Post> {
     return this.save(post)
   }
 
-  async updatePost(updatePostDto: UpdatePostDto) {
+  async updatePost(updatePostDto: UpdatePostDto): Promise<Post> {
     const { id, ...rest } = updatePostDto
     const updatedPost = await this.preload({
       id,
