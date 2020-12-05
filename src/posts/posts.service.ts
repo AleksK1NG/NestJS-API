@@ -3,6 +3,7 @@ import UpdatePostDto from './dto/updatePost.dto'
 import CreatePostDto from './dto/createPost.dto'
 import { PostRepository } from './post.repository'
 import Post from './post.entity'
+import { UpdateResult } from 'typeorm'
 
 @Injectable()
 export class PostsService {
@@ -12,36 +13,19 @@ export class PostsService {
     return this.postRepository.getAllPosts()
   }
 
-  // getPostById(id: number) {
-  //   const post = this.posts.find((post) => post.id === id)
-  //   if (post) return post
-  //   throw new HttpException('Post not found', HttpStatus.NOT_FOUND)
-  // }
-  //
-  // createPost(post: CreatePostDto) {
-  //   const newPost = {
-  //     id: ++this.lastPostId,
-  //     ...post,
-  //   }
-  //   this.posts.push(newPost)
-  //   return newPost
-  // }
-  //
-  // replacePost(id: number, post: UpdatePostDto) {
-  //   const postIndex = this.posts.findIndex((post) => post.id === id)
-  //   if (postIndex > -1) {
-  //     this.posts[postIndex] = post
-  //     return post
-  //   }
-  //   throw new HttpException('Post not found', HttpStatus.NOT_FOUND)
-  // }
-  //
-  // deletePost(id: number) {
-  //   const postIndex = this.posts.findIndex((post) => post.id === id)
-  //   if (postIndex > -1) {
-  //     this.posts.splice(postIndex, 1)
-  //   } else {
-  //     throw new HttpException('Post not found', HttpStatus.NOT_FOUND)
-  //   }
-  // }
+  async getPostById(id: number): Promise<Post> {
+    return this.postRepository.getPostById(id)
+  }
+
+  async createPost(createPostDto: CreatePostDto): Promise<Post> {
+    return this.postRepository.createPost(createPostDto)
+  }
+
+  async updatePost(updatePostDto: UpdatePostDto): Promise<UpdateResult> {
+    return this.postRepository.updatePost(updatePostDto)
+  }
+
+  async deletePost(id: number): Promise<void> {
+    return this.postRepository.deletePost(id)
+  }
 }
