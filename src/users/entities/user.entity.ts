@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne, PrimaryGeneratedColumn
 import { Exclude } from 'class-transformer'
 import Address from './address.entity'
 import Post from '../../posts/post.entity'
+import PublicFile from '../../aws/public-file.entity'
 
 @Entity()
 export class User {
@@ -27,6 +28,13 @@ export class User {
 
   @OneToMany(() => Post, (post: Post) => post.author)
   public posts: Post[]
+
+  @JoinColumn()
+  @OneToOne(() => PublicFile, {
+    eager: true,
+    nullable: true,
+  })
+  public avatar?: PublicFile
 }
 
 export default User
