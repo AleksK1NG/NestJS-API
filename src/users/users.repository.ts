@@ -21,4 +21,12 @@ export class UsersRepository extends Repository<User> {
     if (!user) throw new NotFoundException({ message: `Post with ID "${id}" not found` })
     return user
   }
+
+  // async updateUser(id: number) {
+  //   const user = await this.findOne({ id })
+  //   if (!user) throw new NotFoundException({ message: `Post with ID "${id}" not found` })
+  //   await this.update(id, { ...user, avatar: null })
+  //
+  //
+  // }
 }
