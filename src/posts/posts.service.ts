@@ -3,6 +3,7 @@ import UpdatePostDto from './dto/updatePost.dto'
 import CreatePostDto from './dto/createPost.dto'
 import { PostRepository } from './post.repository'
 import Post from './post.entity'
+import User from '../users/entities/user.entity'
 
 @Injectable()
 export class PostsService {
@@ -16,12 +17,12 @@ export class PostsService {
     return this.postRepository.getPostById(id)
   }
 
-  async createPost(createPostDto: CreatePostDto): Promise<Post> {
-    return this.postRepository.createPost(createPostDto)
+  async createPost(createPostDto: CreatePostDto, user: User): Promise<Post> {
+    return this.postRepository.createPost(createPostDto, user)
   }
 
-  async updatePost(updatePostDto: UpdatePostDto): Promise<Post> {
-    return this.postRepository.updatePost(updatePostDto)
+  async updatePost(id: number, updatePostDto: UpdatePostDto): Promise<Post> {
+    return this.postRepository.updatePost(id, updatePostDto)
   }
 
   async deletePost(id: number): Promise<void> {
