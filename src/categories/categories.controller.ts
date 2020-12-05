@@ -1,21 +1,21 @@
-import { Body, Controller, Delete, Get, Patch, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, UseGuards } from '@nestjs/common'
 import { CategoriesService } from './categories.service'
 import { Category } from './category.entity'
 import CreateCategoryDto from './dto/create-category.dto'
 import JwtAuthenticationGuard from '../auth/guards/jwt-authentication.guard'
 import UpdateCategoryDto from './dto/update-category.dto'
 
-@Controller('categories')
+@Controller('api/v1/categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
   @Get()
-  getAllCategories(): Promise<Category[]> {
+  async getAllCategories(): Promise<Category[]> {
     return this.categoriesService.getAllCategories()
   }
 
   @Get(':id')
-  getCategoryById(id: number): Promise<Category> {
+  getCategoryById(@Param('id', ParseIntPipe) id): Promise<Category> {
     return this.categoriesService.getCategoryById(id)
   }
 
@@ -27,13 +27,13 @@ export class CategoriesController {
 
   @Patch(':id')
   @UseGuards(JwtAuthenticationGuard)
-  async updateCategory(updateCategoryDto: UpdateCategoryDto): Promise<Category> {
-    return this.categoriesService.updateCategory(updateCategoryDto)
+  async updateCategory(@Param('id', ParseIntPipe) id, @Body() updateCategoryDto: UpdateCategoryDto): Promise<Category> {
+    return this.categoriesService.updateCategory(id, updateCategoryDto)
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthenticationGuard)
-  async deleteCategory(id: number): Promise<void> {
+  async deleteCategory(@Param('id', ParseIntPipe) id): Promise<void> {
     return this.categoriesService.deleteCategory(id)
   }
 }
