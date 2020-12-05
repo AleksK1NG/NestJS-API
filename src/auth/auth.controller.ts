@@ -5,7 +5,7 @@ import User from '../users/user.entity'
 import RequestWithUser from './interfaces/requestWithUser.interface'
 import { Response } from 'express'
 import { LocalAuthenticationGuard } from './guards/local-authentication.guard'
-import { JwtAuthenticationGuard } from './guards/jwt-authentication.guard'
+import JwtAuthenticationGuard from './guards/jwt-authentication.guard'
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -19,12 +19,12 @@ export class AuthController {
   @HttpCode(200)
   @UseGuards(LocalAuthenticationGuard)
   @Post('login')
-  async login(@Req() req: RequestWithUser, @Res() res: Response): Promise<User> {
+  async login(@Req() req: RequestWithUser, @Res() res: Response): Promise<Response> {
     const { user } = req
     const cookie = this.authService.getCookieWithJwtToken(user.id)
     res.setHeader('Set-Cookie', cookie)
     user.password = undefined
-    return user
+    return res.send(user)
   }
 
   @UseGuards(JwtAuthenticationGuard)
