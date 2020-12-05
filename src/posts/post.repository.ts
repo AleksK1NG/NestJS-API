@@ -27,8 +27,11 @@ export class PostRepository extends Repository<Post> {
 
   async updatePost(updatePostDto: UpdatePostDto) {
     const { id, ...rest } = updatePostDto
-    const updatedPost = await this.update({ id }, { ...rest })
-    console.log('updatedPost ', updatedPost)
+    const updatedPost = await this.preload({
+      id,
+      ...rest,
+    })
+    if (!updatedPost) throw new NotFoundException({ message: `Post with ID "${id}" not found` })
     return updatedPost
   }
 
