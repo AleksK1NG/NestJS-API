@@ -14,8 +14,8 @@ export class PostsService {
     private readonly postsSearchService: PostsSearchService,
   ) {}
 
-  async getAllPosts(): Promise<Post[]> {
-    return this.postRepository.getAllPosts()
+  async getAllPosts(offset?: number, limit?: number, startId?: number): Promise<{ items: Post[]; count: number }> {
+    return this.postRepository.getAllPosts(offset, limit, startId)
   }
 
   async getPostById(id: number): Promise<Post> {
@@ -39,14 +39,27 @@ export class PostsService {
     return this.postRepository.deletePost(id)
   }
 
-  async searchForPosts(text: string): Promise<Post[]> {
-    const results = await this.postsSearchService.search(text)
+  async searchForPosts(
+    text: string,
+    offset?: number,
+    limit?: number,
+    startId?: number,
+  ): Promise<{ items: Post[]; count: number }> {
+    const { results, count } = await this.postsSearchService.search(text, offset, limit, startId)
     const ids = results.map((result) => result.id)
     if (!ids.length) {
-      return []
+      return {
+        items: [],
+        count,
+      }
     }
-    return this.postRepository.find({
+    const items = await this.postRepository.find({
       where: { id: In(ids) },
     })
+
+    return {
+      items,
+      count,
+    }
   }
 }

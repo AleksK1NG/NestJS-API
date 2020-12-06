@@ -2,7 +2,9 @@ import PostSearchBody from './postSearchBody.interface'
 
 interface PostSearchResult {
   hits: {
-    total: number
+    total: {
+      value: number
+    }
     hits: Array<{
       _source: PostSearchBody
     }>
