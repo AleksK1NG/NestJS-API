@@ -14,6 +14,11 @@ export class UpdatePostDto {
   @IsNotEmpty()
   @IsOptional()
   title: string
+
+  @IsString({ each: true })
+  @IsNotEmpty()
+  @IsOptional()
+  paragraphs: string[]
 }
 
 export default UpdatePostDto
