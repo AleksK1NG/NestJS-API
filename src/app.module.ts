@@ -6,8 +6,8 @@ import { DatabaseModule } from './database/database.module'
 import { ConfigModule } from '@nestjs/config'
 import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
-import { CategoriesModule } from './categories/categories.module';
-import { AwsModule } from './aws/aws.module';
+import { CategoriesModule } from './categories/categories.module'
+import { AwsModule } from './aws/aws.module'
 import * as Joi from 'joi'
 
 @Module({
@@ -25,7 +25,10 @@ import * as Joi from 'joi'
         AWS_REGION: Joi.string().required(),
         AWS_ACCESS_KEY_ID: Joi.string().required(),
         AWS_SECRET_ACCESS_KEY: Joi.string().required(),
+        AWS_ENDPOINT: Joi.string().required(),
         AWS_PUBLIC_BUCKET_NAME: Joi.string().required(),
+        AWS_S3_FORCE_PATH_STYLE: Joi.boolean().required(),
+        AWS_SIGNATURE_VERSION: Joi.string().required(),
       }),
     }),
     PostsModule,

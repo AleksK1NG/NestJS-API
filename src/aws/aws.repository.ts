@@ -6,18 +6,17 @@ import { NotFoundException } from '@nestjs/common'
 
 @EntityRepository(PublicFile)
 export class AwsRepository extends Repository<PublicFile> {
-  async uploadPublicFile(dataBuffer: Buffer, filename: string, bucket: string): Promise<PublicFile> {
-    const s3 = new S3({
-      accessKeyId: 'minio',
-      secretAccessKey: 'minio123',
-      endpoint: 'http://127.0.0.1:9000',
-      s3ForcePathStyle: true, // needed with minio?
-      signatureVersion: 'v4',
-    })
+  async uploadPublicFile(
+    data: Buffer,
+    filename: string,
+    bucket: string,
+    options: S3.Types.ClientConfiguration,
+  ): Promise<PublicFile> {
+    const s3 = new S3(options)
     const uploadedResult = await s3
       .upload({
         Bucket: bucket,
-        Body: dataBuffer,
+        Body: data,
         Key: `${uuid()}-${filename}`,
       })
       .promise()
@@ -30,17 +29,11 @@ export class AwsRepository extends Repository<PublicFile> {
     return this.save(newFile)
   }
 
-  async deletePublicFile(fileId: number, bucket: string): Promise<void> {
+  async deletePublicFile(fileId: number, bucket: string, options: S3.Types.ClientConfiguration): Promise<void> {
     const file = await this.findOne({ id: fileId })
     if (!file) throw new NotFoundException(`File with ID: ${fileId} not found`)
 
-    const s3 = new S3({
-      accessKeyId: 'minio',
-      secretAccessKey: 'minio123',
-      endpoint: 'http://127.0.0.1:9000',
-      s3ForcePathStyle: true, // needed with minio?
-      signatureVersion: 'v4',
-    })
+    const s3 = new S3(options)
     await s3
       .deleteObject({
         Bucket: bucket,
