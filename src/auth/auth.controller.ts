@@ -5,6 +5,7 @@ import User from '../users/entities/user.entity'
 import RequestWithUser from './interfaces/requestWithUser.interface'
 import { LocalAuthenticationGuard } from './guards/local-authentication.guard'
 import JwtAuthenticationGuard from './guards/jwt-authentication.guard'
+import JwtRefreshGuard from './guards/jwt-refresh.guard'
 
 @Controller('api/v1/auth')
 export class AuthController {
@@ -35,6 +36,14 @@ export class AuthController {
   @UseGuards(JwtAuthenticationGuard)
   @Get('me')
   async authenticate(@Req() req: RequestWithUser): Promise<User> {
+    return req.user
+  }
+
+  @UseGuards(JwtRefreshGuard)
+  @Get('refresh')
+  async refresh(@Req() req: RequestWithUser) {
+    const accessTokenCookie = await this.authService.getCookieWithJwtAccessToken(req.user.id)
+    req.res.setHeader('Set-Cookie', accessTokenCookie)
     return req.user
   }
 }
