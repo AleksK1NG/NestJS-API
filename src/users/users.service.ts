@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
+import { Injectable, InternalServerErrorException, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { UsersRepository } from './users.repository'
 import CreateUserDto from './dto/create-user.dto'
 import User from './entities/user.entity'
@@ -7,6 +7,7 @@ import PublicFile from '../aws/public-file.entity'
 import { PrivateAwsService } from '../private-aws/private-aws.service'
 import PrivateFile from '../private-aws/private-file.entity'
 import * as bcrypt from 'bcrypt'
+import { Connection, UpdateResult } from 'typeorm'
 
 @Injectable()
 export class UsersService {
@@ -14,6 +15,7 @@ export class UsersService {
     private readonly usersRepository: UsersRepository,
     private readonly awsService: AwsService,
     private readonly privateAwsService: PrivateAwsService,
+    private connection: Connection,
   ) {}
 
   async createUser(createUserDto: CreateUserDto): Promise<User> {
@@ -48,14 +50,28 @@ export class UsersService {
   }
 
   async deleteAvatar(userId: number): Promise<void> {
+    const queryRunner = this.connection.createQueryRunner()
     const user = await this.getById(userId)
     const fileId = user.avatar?.id
+
     if (fileId) {
-      await this.usersRepository.update(userId, {
-        ...user,
-        avatar: null,
-      })
-      await this.awsService.deletePublicFile(fileId)
+      await queryRunner.connect()
+      await queryRunner.startTransaction()
+
+      try {
+        await queryRunner.manager.update(User, userId, {
+          ...user,
+          avatar: null,
+        })
+
+        await this.awsService.deletePublicFileWithQueryRunner(fileId, queryRunner)
+        await queryRunner.commitTransaction()
+      } catch (e) {
+        await queryRunner.rollbackTransaction()
+        throw new InternalServerErrorException()
+      } finally {
+        await queryRunner.release()
+      }
     }
   }
 
@@ -102,7 +118,7 @@ export class UsersService {
     }
   }
 
-  async removeRefreshToken(userId: number) {
+  async removeRefreshToken(userId: number): Promise<UpdateResult> {
     return this.usersRepository.update(userId, {
       currentHashedRefreshToken: null,
     })

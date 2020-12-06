@@ -60,7 +60,7 @@ export class AuthController {
 
   @UseGuards(JwtRefreshGuard)
   @Get('refresh')
-  async refresh(@Req() req: RequestWithUser) {
+  async refresh(@Req() req: RequestWithUser): Promise<User> {
     const accessTokenCookie = await this.authService.getCookieWithJwtAccessToken(req.user.id)
     req.res.setHeader('Set-Cookie', accessTokenCookie)
     return req.user

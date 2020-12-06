@@ -39,7 +39,7 @@ export class PostsService {
     return this.postRepository.deletePost(id)
   }
 
-  async searchForPosts(text: string) {
+  async searchForPosts(text: string): Promise<Post[]> {
     const results = await this.postsSearchService.search(text)
     const ids = results.map((result) => result.id)
     if (!ids.length) {

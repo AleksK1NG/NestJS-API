@@ -1,4 +1,4 @@
-import { EntityRepository, Repository } from 'typeorm'
+import { EntityRepository, QueryRunner, Repository } from 'typeorm'
 import PublicFile from './public-file.entity'
 import { S3 } from 'aws-sdk'
 import { v4 as uuid } from 'uuid'
@@ -48,5 +48,17 @@ export class AwsRepository extends Repository<PublicFile> {
       .promise()
 
     await this.delete(fileId)
+  }
+
+  async deletePublicFileWithQueryRunner(fileId: number, queryRunner: QueryRunner): Promise<void> {
+    const file = await queryRunner.manager.findOne(PublicFile, { id: fileId })
+    const s3 = this.getS3Instance()
+    await s3
+      .deleteObject({
+        Bucket: this.bucket,
+        Key: file.key,
+      })
+      .promise()
+    await queryRunner.manager.delete(PublicFile, fileId)
   }
 }
