@@ -5,6 +5,7 @@ import { PostRepository } from './post.repository'
 import Post from './post.entity'
 import User from '../users/entities/user.entity'
 import { PostsSearchService } from './postsSearch.service'
+import { In } from 'typeorm'
 
 @Injectable()
 export class PostsService {
@@ -36,5 +37,16 @@ export class PostsService {
   async deletePost(id: number): Promise<void> {
     await this.postsSearchService.remove(id)
     return this.postRepository.deletePost(id)
+  }
+
+  async searchForPosts(text: string) {
+    const results = await this.postsSearchService.search(text)
+    const ids = results.map((result) => result.id)
+    if (!ids.length) {
+      return []
+    }
+    return this.postRepository.find({
+      where: { id: In(ids) },
+    })
   }
 }

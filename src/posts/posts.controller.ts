@@ -25,13 +25,11 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get('')
-  async getAllPosts(@Query() query) {
-    const posts = await this.postsService.getAllPosts()
-    return {
-      status: 200,
-      posts,
-      query,
+  async getAllPosts(@Query('search') search: string) {
+    if (search) {
+      return this.postsService.searchForPosts(search)
     }
+    return await this.postsService.getAllPosts()
   }
 
   @Get(':id')
