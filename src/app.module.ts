@@ -8,7 +8,8 @@ import { UsersModule } from './users/users.module'
 import { AuthModule } from './auth/auth.module'
 import { CategoriesModule } from './categories/categories.module'
 import { AwsModule } from './aws/aws.module'
-import { PrivateAwsModule } from './private-aws/private-aws.module';
+import { PrivateAwsModule } from './private-aws/private-aws.module'
+import { SearchModule } from './search/search.module';
 import * as Joi from 'joi'
 
 @Module({
@@ -40,6 +41,7 @@ import * as Joi from 'joi'
     CategoriesModule,
     AwsModule,
     PrivateAwsModule,
+    SearchModule,
   ],
   controllers: [AppController],
   providers: [AppService],
