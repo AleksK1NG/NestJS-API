@@ -6,10 +6,11 @@ import RequestWithUser from './interfaces/requestWithUser.interface'
 import { LocalAuthenticationGuard } from './guards/local-authentication.guard'
 import JwtAuthenticationGuard from './guards/jwt-authentication.guard'
 import JwtRefreshGuard from './guards/jwt-refresh.guard'
+import { UsersService } from '../users/users.service'
 
 @Controller('api/v1/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly usersService: UsersService) {}
 
   @Post('register')
   async register(@Body() registerDto: RegisterDto): Promise<User> {
@@ -21,14 +22,21 @@ export class AuthController {
   @Post('login')
   async login(@Req() req: RequestWithUser): Promise<User> {
     const { user } = req
-    const cookie = this.authService.getCookieWithJwtToken(user.id)
-    req.res.setHeader('Set-Cookie', cookie)
+    const accessTokenCookie = await this.authService.getCookieWithJwtAccessToken(user.id)
+
+    const { cookie: refreshTokenCookie, token: refreshToken } = await this.authService.getCookieWithJwtRefreshToken(
+      user.id,
+    )
+
+    await this.usersService.setCurrentRefreshToken(refreshToken, user.id)
+    req.res.setHeader('Set-Cookie', [accessTokenCookie, refreshTokenCookie])
     return user
   }
 
   @UseGuards(JwtAuthenticationGuard)
   @Post('logout')
   async logout(@Req() req: RequestWithUser): Promise<void> {
+    await this.usersService.removeRefreshToken(req.user.id)
     const cookie = this.authService.getCookieForLogOut()
     req.res.setHeader('Set-Cookie', cookie)
   }
