@@ -1,4 +1,14 @@
-import { Body, Controller, Get, HttpCode, Post, Req, UseGuards } from '@nestjs/common'
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  HttpCode,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common'
 import { AuthService } from './auth.service'
 import RegisterDto from './dto/register.dto'
 import User from '../users/entities/user.entity'
@@ -9,6 +19,7 @@ import JwtRefreshGuard from './guards/jwt-refresh.guard'
 import { UsersService } from '../users/users.service'
 
 @Controller('api/v1/auth')
+@UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
   constructor(private readonly authService: AuthService, private readonly usersService: UsersService) {}
 
