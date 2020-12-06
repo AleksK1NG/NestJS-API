@@ -19,6 +19,7 @@ import UpdatePostDto from './dto/updatePost.dto'
 import RequestWithUser from '../auth/interfaces/requestWithUser.interface'
 import JwtAuthenticationGuard from '../auth/guards/jwt-authentication.guard'
 import PostEntity from './post.entity'
+import { PaginationParams } from '../utils/paginationParams'
 
 @Controller('api/v1/posts')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -26,11 +27,14 @@ export class PostsController {
   constructor(private readonly postsService: PostsService) {}
 
   @Get('')
-  async getAllPosts(@Query('search') search: string): Promise<PostEntity[]> {
+  async getAllPosts(
+    @Query('search') search: string,
+    @Query() { offset, limit, startId }: PaginationParams,
+  ): Promise<{ items: PostEntity[]; count: number }> {
     if (search) {
-      return this.postsService.searchForPosts(search)
+      return this.postsService.searchForPosts(search, offset, limit, startId)
     }
-    return await this.postsService.getAllPosts()
+    return await this.postsService.getAllPosts(offset, limit, startId)
   }
 
   @Get(':id')
