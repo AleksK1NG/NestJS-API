@@ -12,7 +12,6 @@ export class UsersController {
   @UseGuards(JwtAuthenticationGuard)
   @UseInterceptors(FileInterceptor('file'))
   async uploadAvatar(@Req() req: RequestWithUser, @UploadedFile() file: Record<string, any>) {
-    console.log('uploadAvatar ', file)
     return this.usersService.uploadAvatar(req.user.id, file.buffer, file.originalname)
   }
 

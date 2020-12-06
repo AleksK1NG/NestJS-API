@@ -32,6 +32,7 @@ export class UsersService {
     }
 
     const avatar = await this.awsService.uploadPublicFile(imageBuffer, filename)
+
     await this.usersRepository.update(userId, {
       ...user,
       avatar,
