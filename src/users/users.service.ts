@@ -6,6 +6,7 @@ import { AwsService } from '../aws/aws.service'
 import PublicFile from '../aws/public-file.entity'
 import { PrivateAwsService } from '../private-aws/private-aws.service'
 import PrivateFile from '../private-aws/private-file.entity'
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class UsersService {
@@ -82,5 +83,28 @@ export class UsersService {
         }
       }),
     )
+  }
+
+  async setCurrentRefreshToken(refreshToken: string, userId: number): Promise<void> {
+    const currentHashedRefreshToken = await bcrypt.hash(refreshToken, 10)
+    await this.usersRepository.update(userId, {
+      currentHashedRefreshToken,
+    })
+  }
+
+  async getUserIfRefreshTokenMatches(refreshToken: string, userId: number): Promise<User> {
+    const user = await this.getById(userId)
+
+    const isRefreshTokenMatching = await bcrypt.compare(refreshToken, user.currentHashedRefreshToken)
+
+    if (isRefreshTokenMatching) {
+      return user
+    }
+  }
+
+  async removeRefreshToken(userId: number) {
+    return this.usersRepository.update(userId, {
+      currentHashedRefreshToken: null,
+    })
   }
 }
