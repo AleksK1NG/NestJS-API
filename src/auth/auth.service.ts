@@ -61,7 +61,7 @@ export class AuthService {
     }
   }
 
-  async getCookieWithJwtAccessToken(userId: number) {
+  async getCookieWithJwtAccessToken(userId: number): Promise<string> {
     const payload: TokenPayload = { userId }
     const token = this.jwtService.sign(payload, {
       secret: this.configService.get('JWT_ACCESS_TOKEN_SECRET'),
