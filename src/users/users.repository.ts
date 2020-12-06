@@ -12,21 +12,19 @@ export class UsersRepository extends Repository<User> {
 
   async getByEmail(email: string): Promise<User> {
     const user = await this.findOne({ email })
-    if (!user) throw new NotFoundException({ message: `Post with email "${email}" not found` })
+    if (!user) throw new NotFoundException({ message: `User with email "${email}" not found` })
     return user
   }
 
   async getById(id: number): Promise<User> {
     const user = await this.findOne({ id })
-    if (!user) throw new NotFoundException({ message: `Post with ID "${id}" not found` })
+    if (!user) throw new NotFoundException({ message: `User with ID "${id}" not found` })
     return user
   }
 
-  // async updateUser(id: number) {
-  //   const user = await this.findOne({ id })
-  //   if (!user) throw new NotFoundException({ message: `Post with ID "${id}" not found` })
-  //   await this.update(id, { ...user, avatar: null })
-  //
-  //
-  // }
+  async getByIdWithFiles(id: number): Promise<User> {
+    const user = await this.findOne({ id }, { relations: ['files'] })
+    if (!user) throw new NotFoundException({ message: `User with ID "${id}" not found` })
+    return user
+  }
 }

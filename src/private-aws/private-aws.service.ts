@@ -11,7 +11,6 @@ export class PrivateAwsService {
   }
 
   async getPrivateFile(fileId: number): Promise<Record<string, any>> {
-    console.log(111)
     return this.privateAwsRepository.getPrivateFile(fileId)
   }
 
