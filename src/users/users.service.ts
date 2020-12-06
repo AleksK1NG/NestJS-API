@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { UsersRepository } from './users.repository'
 import CreateUserDto from './dto/create-user.dto'
 import User from './entities/user.entity'
@@ -60,6 +60,14 @@ export class UsersService {
 
   async uploadPrivateFile(userId: number, imageBuffer: Buffer, filename: string): Promise<PrivateFile> {
     return this.privateAwsService.uploadPrivateFile(imageBuffer, userId, filename)
+  }
+
+  async getPrivateFile(userId: number, fileId: number): Promise<Record<string, any>> {
+    const file = await this.privateAwsService.getPrivateFile(fileId)
+    if (file.info.owner.id === userId) {
+      throw new UnauthorizedException()
+    }
+    return file
   }
 
   async getAllPrivateFiles(userId: number): Promise<Record<string, any>> {
