@@ -17,7 +17,9 @@ import { LocalAuthenticationGuard } from './guards/local-authentication.guard'
 import JwtAuthenticationGuard from './guards/jwt-authentication.guard'
 import JwtRefreshGuard from './guards/jwt-refresh.guard'
 import { UsersService } from '../users/users.service'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('Authentication')
 @Controller('api/v1/auth')
 @UseInterceptors(ClassSerializerInterceptor)
 export class AuthController {
