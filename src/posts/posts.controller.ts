@@ -20,7 +20,9 @@ import RequestWithUser from '../auth/interfaces/requestWithUser.interface'
 import JwtAuthenticationGuard from '../auth/guards/jwt-authentication.guard'
 import PostEntity from './post.entity'
 import { PaginationParams } from '../utils/paginationParams'
+import { ApiTags } from '@nestjs/swagger'
 
+@ApiTags('Posts')
 @Controller('api/v1/posts')
 @UseInterceptors(ClassSerializerInterceptor)
 export class PostsController {
